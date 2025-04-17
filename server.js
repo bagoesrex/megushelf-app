@@ -10,18 +10,14 @@ const app = express();
 const PORT = 5000;
 
 mongoose
-  .connect(dbConfig.uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(dbConfig.uri)
   .then(() => {
     console.log("Connected to MongoDB");
-
     app.listen(PORT, () => {
       console.log(`Server running on http://localhost:${PORT}`);
     });
   })
-  .catch((err) => console.log("Error connecting to MongoDB:", err));
+  .catch((err) => console.error("MongoDB connection error:", err));
 
 app.use(cors());
 app.use(express.json());
