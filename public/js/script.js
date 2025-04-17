@@ -17,6 +17,28 @@ function loadContent(section, el) {
 
       if (section === "books") {
         loadBooks();
+        loadBookCategories();
+        document
+          .getElementById("book-category-filter")
+          .addEventListener("change", function () {
+            const selectedCategory = this.value;
+            if (selectedCategory) {
+              loadBooksByCategory(selectedCategory);
+            } else {
+              loadBooks();
+            }
+          });
+
+        document
+          .getElementById("search-books-input")
+          .addEventListener("input", function () {
+            const query = this.value.trim();
+            if (query) {
+              searchBooks(query);
+            } else {
+              loadBooks();
+            }
+          });
       }
     })
     .catch((err) => {
@@ -97,13 +119,119 @@ function loadBookCategories(selectedId = "") {
     .then((res) => res.json())
     .then((categories) => {
       const categorySelect = document.getElementById("book-category");
+      const bookCategoryFilter = document.getElementById(
+        "book-category-filter"
+      );
+
       categorySelect.innerHTML =
         '<option value="">-- Select Category --</option>';
+      bookCategoryFilter.innerHTML =
+        '<option value="">-- All Categories --</option>';
 
       categories.forEach((cat) => {
         const isSelected = cat._id === selectedId ? "selected" : "";
         categorySelect.innerHTML += `<option value="${cat._id}" ${isSelected}>${cat.categoryName}</option>`;
+        bookCategoryFilter.innerHTML += `<option value="${cat._id}">${cat.categoryName}</option>`;
       });
+    })
+    .catch((err) => {
+      console.error("Error fetching categories:", err);
+    });
+}
+
+function loadBooksByCategory(categoryId) {
+  fetch(`${API_BASE}/books/category/${categoryId}`)
+    .then((res) => res.json())
+    .then((books) => {
+      const tbody = document.getElementById("book-table-body");
+      const bookListContainer = document.getElementById("book-list-container");
+      const emptyBookContainer = document.getElementById(
+        "empty-book-container"
+      );
+
+      tbody.innerHTML = "";
+      if (books.length === 0) {
+        bookListContainer.style.display = "none";
+        emptyBookContainer.style.display = "block";
+        return;
+      }
+
+      bookListContainer.style.display = "block";
+      emptyBookContainer.style.display = "none";
+
+      books.forEach((book, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${book.title}</td>
+          <td>${book.author}</td>
+          <td>${book.publisher}</td>
+          <td>${book.category?.[0]?.categoryName || "-"}</td>
+          <td>${
+            book.published ? new Date(book.published).toLocaleDateString() : "-"
+          }</td>
+          <td>
+            <button class="btn btn-sm btn-warning text-white me-2" onclick='openBookModal(${JSON.stringify(
+              book
+            )})'>Edit</button>
+            <button class="btn btn-sm btn-danger" onclick='deleteBook("${
+              book._id
+            }")'>Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    })
+    .catch((err) => {
+      console.error("Error fetching books by category:", err);
+    });
+}
+
+function searchBooks(query) {
+  fetch(`${API_BASE}/books/search?query=${query}`)
+    .then((res) => res.json())
+    .then((books) => {
+      const tbody = document.getElementById("book-table-body");
+      const bookListContainer = document.getElementById("book-list-container");
+      const emptyBookContainer = document.getElementById(
+        "empty-book-container"
+      );
+
+      tbody.innerHTML = "";
+      if (books.length === 0) {
+        bookListContainer.style.display = "none";
+        emptyBookContainer.style.display = "block";
+        return;
+      }
+
+      bookListContainer.style.display = "block";
+      emptyBookContainer.style.display = "none";
+
+      books.forEach((book, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${book.title}</td>
+          <td>${book.author}</td>
+          <td>${book.publisher}</td>
+          <td>${book.category?.[0]?.categoryName || "-"}</td>
+          <td>${
+            book.published ? new Date(book.published).toLocaleDateString() : "-"
+          }</td>
+          <td>
+            <button class="btn btn-sm btn-warning text-white me-2" onclick='openBookModal(${JSON.stringify(
+              book
+            )})'>Edit</button>
+            <button class="btn btn-sm btn-danger" onclick='deleteBook("${
+              book._id
+            }")'>Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    })
+    .catch((err) => {
+      console.error("Error searching books:", err);
     });
 }
 
