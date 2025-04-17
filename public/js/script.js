@@ -92,20 +92,28 @@ window.deleteBook = (id) => {
     });
 };
 
-function loadBookCategories() {
+function loadBookCategories(selectedId = "") {
   fetch(`${API_BASE}/bookcategories`)
     .then((res) => res.json())
     .then((categories) => {
       const categorySelect = document.getElementById("book-category");
-      categorySelect.innerHTML = `<option value="">-- Select Category --</option>`;
+      categorySelect.innerHTML =
+        '<option value="">-- Select Category --</option>';
+
       categories.forEach((cat) => {
-        categorySelect.innerHTML += `<option value="${cat._id}">${cat.categoryName}</option>`;
+        const isSelected = cat._id === selectedId ? "selected" : "";
+        categorySelect.innerHTML += `<option value="${cat._id}" ${isSelected}>${cat.categoryName}</option>`;
       });
     });
 }
 
 window.openBookModal = (book = null) => {
-  loadBookCategories();
+  const selectedCategoryId = Array.isArray(book?.category)
+    ? book.category[0]?._id || book.category[0]?.$oid || book.category[0] || ""
+    : "";
+
+  loadBookCategories(selectedCategoryId);
+
   const modal = new bootstrap.Modal(document.getElementById("bookModal"));
   const form = document.getElementById("book-form");
 
@@ -115,7 +123,7 @@ window.openBookModal = (book = null) => {
   document.getElementById("book-title").value = book ? book.title : "";
   document.getElementById("book-author").value = book ? book.author : "";
   document.getElementById("book-publisher").value = book ? book.publisher : "";
-  document.getElementById("book-category").value = book?.category?._id || "";
+  document.getElementById("book-category").value = selectedCategoryId;
   document.getElementById("book-published").value = book
     ? new Date(book.published).toISOString().split("T")[0]
     : "";
