@@ -6,7 +6,7 @@ body {
 
 .wrapper {
     display: flex;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .sidebar {
@@ -62,4 +62,31 @@ body {
     font-weight: bold;
     font-size: 1.2rem;
     margin-bottom: 2rem;
+}
+
+.primary-color {
+    color: #e91e1e;
+}
+
+.primary-bg-color {
+    background-color: #e91e1e;
+}
+
+.primary-theme {
+    color: #e91e1e;
+    background-color: #e91e1e;
+}
+
+.table th,
+.table td {
+    vertical-align: middle;
+}
+
+.card h4 {
+    font-weight: 600;
+}
+
+.btn-info {
+    background-color: #0a7bb0;
+    border: none;
 }
