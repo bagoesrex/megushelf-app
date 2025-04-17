@@ -17,7 +17,7 @@
       rel="stylesheet"
     />
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
     <div class="wrapper">
@@ -47,111 +47,13 @@
         </div>
 
         <!-- Main Content -->
-        <div class="content" id="main-content">
-          <div class="container">
-            <!-- Welcome Card -->
-            <div class="card p-4 mb-4 shadow-sm">
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  <h3 class="mb-2">
-                    Welcome to <span class="text-danger">MeguShelf</span>
-                  </h3>
-                  <p class="text-muted">
-                    Manage your digital book collection efficiently and easily.
-                  </p>
-                </div>
-                <div>
-                  <i class="fa-solid fa-book fa-4x"></i>
-                </div>
-              </div>
-            </div>
-
-            <!-- Stats Section -->
-            <div class="row g-2" id="stats-section">
-              <div class="col-md-6">
-                <div class="card text-white bg-primary shadow">
-                  <div class="card-body">
-                    <h5 class="card-title">Total Books</h5>
-                    <p class="card-text fs-4" id="total-books"></p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="card text-white bg-success shadow">
-                  <div class="card-body">
-                    <h5 class="card-title">Categories</h5>
-                    <p class="card-text fs-4" id="total-categories"></p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Book List -->
-            <div class="card p-4 mt-4 shadow-sm">
-              <div
-                class="d-flex justify-content-between align-items-center mb-3"
-              >
-                <h4 class="mb-0">📚 Book List</h4>
-                <button class="btn btn-sm btn-primary">
-                  <i class="fa fa-plus me-1"></i> Add New Book
-                </button>
-              </div>
-
-              <!-- Filter & Search -->
-              <div class="row g-3 align-items-end mb-4">
-                <div class="col-md-3">
-                  <label class="form-label fw-semibold">Category</label>
-                  <select class="form-select">
-                    <option selected>All Categories</option>
-                    <option value="1">Novel</option>
-                    <option value="2">Science</option>
-                    <option value="3">History</option>
-                  </select>
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label fw-semibold">Publication Date</label>
-                  <input type="date" class="form-control" />
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label fw-semibold">Search</label>
-                  <div class="input-group">
-                    <input
-                      type="text"
-                      class="form-control"
-                      placeholder="Search by title, author, or publisher..."
-                    />
-                    <button class="btn btn-outline-secondary" type="button">
-                      <i class="fa fa-search"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Book Table -->
-              <div class="table-responsive">
-                <table class="table table-bordered table-hover align-middle">
-                  <thead class="table-primary">
-                    <tr>
-                      <th scope="col">No</th>
-                      <th scope="col">Title</th>
-                      <th scope="col">Author</th>
-                      <th scope="col">Publisher</th>
-                      <th scope="col">Category</th>
-                      <th scope="col">Published</th>
-                      <th scope="col">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody id="book-table-body"></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div class="content" id="main-content"></div>
       </div>
     </div>
 
     <!-- Custom JS -->
-    <script src="script.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/dashboard.js"></script>
     <!-- Bootstrap JS -->
     <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
