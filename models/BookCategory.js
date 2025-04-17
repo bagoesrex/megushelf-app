@@ -6,13 +6,8 @@ const BookCategorySchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      trim: true,
     },
-    books: [
-      {
-        type: mongoose.Types.ObjectId,
-        ref: "Book",
-      },
-    ],
   },
   {
     timestamps: true,
