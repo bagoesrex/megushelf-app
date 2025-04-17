@@ -1,10 +1,11 @@
+const API_BASE = "http://localhost:5000/api";
+
 function loadContent(section, el) {
   const content = document.getElementById("main-content");
 
   document
     .querySelectorAll(".sidebar .nav-item")
     .forEach((item) => item.classList.remove("active"));
-
   if (el) {
     el.classList.add("active");
   }
@@ -14,79 +15,8 @@ function loadContent(section, el) {
     .then((html) => {
       content.innerHTML = html;
 
-      if (section === "dashboard") {
-        // Stats Dummy
-        const statsData = {
-          totalBooks: 100,
-          categories: 8,
-        };
-
-        document.getElementById("total-books").innerText = statsData.totalBooks;
-        document.getElementById("total-categories").innerText =
-          statsData.categories;
-
-        // Book list Dummy
-        const bookList = [
-          {
-            id: 1,
-            title: "The Explosion",
-            author: "Megumin",
-            publisher: "Sikucink",
-            category: "Novel",
-            published: 2001,
-          },
-          {
-            id: 2,
-            title: "Brief History of Time",
-            author: "Stephen Hawking",
-            publisher: "Bantam Books",
-            category: "Science",
-            published: 1988,
-          },
-          {
-            id: 3,
-            title: "1984",
-            author: "George Orwell",
-            publisher: "Secker & Warburg",
-            category: "Dystopian",
-            published: 1949,
-          },
-          {
-            id: 4,
-            title: "Sapiens",
-            author: "Yuval Noah Harari",
-            publisher: "Harvill Secker",
-            category: "History",
-            published: 2011,
-          },
-          {
-            id: 5,
-            title: "Clean Code",
-            author: "Robert C. Martin",
-            publisher: "Prentice Hall",
-            category: "Programming",
-            published: 2008,
-          },
-        ];
-
-        const tbody = document.getElementById("book-table-body");
-
-        bookList.forEach((book, index) => {
-          const row = `
-            <tr>
-              <td>${index + 1}</td>
-              <td>${book.title}</td>
-              <td>${book.author}</td>
-              <td>${book.publisher}</td>
-              <td>${book.category}</td>
-              <td>${book.published}</td>
-              <td><button class="btn btn-sm btn-info text-white">Detail</button></td>
-            </tr>
-          `;
-          tbody.innerHTML += row;
-        });
-      } else if (section === "category") {
-      } else if (section === "books") {
+      if (section === "books") {
+        loadBooks();
       }
     })
     .catch((err) => {
@@ -95,9 +25,147 @@ function loadContent(section, el) {
     });
 }
 
+function loadBooks() {
+  fetch(`${API_BASE}/books`)
+    .then((res) => res.json())
+    .then((books) => {
+      const tbody = document.getElementById("book-table-body");
+      const bookListContainer = document.getElementById("book-list-container");
+      const emptyBookContainer = document.getElementById(
+        "empty-book-container"
+      );
+
+      tbody.innerHTML = "";
+      if (books.length === 0) {
+        bookListContainer.style.display = "none";
+        emptyBookContainer.style.display = "block";
+        return;
+      }
+
+      bookListContainer.style.display = "block";
+      emptyBookContainer.style.display = "none";
+
+      books.forEach((book, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${book.title}</td>
+          <td>${book.author}</td>
+          <td>${book.publisher}</td>
+          <td>${book.category?.[0]?.categoryName || "-"}</td>
+          <td>${
+            book.published ? new Date(book.published).toLocaleDateString() : "-"
+          }</td>
+          <td>
+            <button class="btn btn-sm btn-warning text-white me-2" onclick='openBookModal(${JSON.stringify(
+              book
+            )})'>Edit</button>
+            <button class="btn btn-sm btn-danger" onclick='deleteBook("${
+              book._id
+            }")'>Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    })
+    .catch((err) => {
+      console.error("Error fetching books:", err);
+    });
+}
+
+window.deleteBook = (id) => {
+  const modal = new bootstrap.Modal(
+    document.getElementById("deleteConfirmModal")
+  );
+  modal.show();
+
+  document
+    .getElementById("confirmDeleteBtn")
+    .addEventListener("click", function () {
+      fetch(`${API_BASE}/books/${id}`, { method: "DELETE" })
+        .then((res) => res.json())
+        .then(() => {
+          modal.hide();
+          loadContent("books");
+        })
+        .catch((err) => console.error("Error deleting book:", err));
+    });
+};
+
+function loadBookCategories() {
+  fetch(`${API_BASE}/bookcategories`)
+    .then((res) => res.json())
+    .then((categories) => {
+      const categorySelect = document.getElementById("book-category");
+      categorySelect.innerHTML = `<option value="">-- Select Category --</option>`;
+      categories.forEach((cat) => {
+        categorySelect.innerHTML += `<option value="${cat._id}">${cat.categoryName}</option>`;
+      });
+    });
+}
+
+window.openBookModal = (book = null) => {
+  loadBookCategories();
+  const modal = new bootstrap.Modal(document.getElementById("bookModal"));
+  const form = document.getElementById("book-form");
+
+  form.reset();
+
+  document.getElementById("book-id").value = book ? book._id : "";
+  document.getElementById("book-title").value = book ? book.title : "";
+  document.getElementById("book-author").value = book ? book.author : "";
+  document.getElementById("book-publisher").value = book ? book.publisher : "";
+  document.getElementById("book-category").value = book?.category?._id || "";
+  document.getElementById("book-published").value = book
+    ? new Date(book.published).toISOString().split("T")[0]
+    : "";
+
+  modal.show();
+};
+
 document.addEventListener("DOMContentLoaded", function () {
   const firstNavItem = document.querySelector(".sidebar .nav-item");
   if (firstNavItem) {
     loadContent("dashboard", firstNavItem);
+  }
+});
+
+document.addEventListener("submit", function (e) {
+  if (e.target.id === "book-form") {
+    e.preventDefault();
+
+    const fields = {
+      title: document.getElementById("book-title"),
+      author: document.getElementById("book-author"),
+      publisher: document.getElementById("book-publisher"),
+      category: document.getElementById("book-category"),
+      published: document.getElementById("book-published"),
+    };
+
+    const id = document.getElementById("book-id").value;
+    const data = {
+      title: fields.title.value.trim(),
+      author: fields.author.value.trim(),
+      publisher: fields.publisher.value.trim(),
+      category: fields.category.value,
+      published: fields.published.value,
+    };
+
+    const method = id ? "PUT" : "POST";
+    const endpoint = id ? `${API_BASE}/books/${id}` : `${API_BASE}/books`;
+
+    fetch(endpoint, {
+      method: method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then(() => {
+        bootstrap.Modal.getInstance(
+          document.getElementById("bookModal")
+        ).hide();
+        loadContent("books");
+      })
+      .catch((err) => console.error("Error saving book:", err));
   }
 });
