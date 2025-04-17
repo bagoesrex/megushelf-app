@@ -19,3 +19,12 @@ function loadContent(section, el) {
         `;
   }
 }
+
+// Dummy Data
+const statsData = {
+  totalBooks: 100,
+  categories: 8,
+};
+
+document.getElementById("total-books").innerText = statsData.totalBooks;
+document.getElementById("total-categories").innerText = statsData.categories;
