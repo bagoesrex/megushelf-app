@@ -43,6 +43,10 @@ Simple APP for book data management and book categories using **Node.js**, **Exp
  ```bash
  npm start
  ```
+5. Open Port:
+ ```bash
+ http://localhost:3000
+ ```
 
 ## 🔜 Soon As Possible
 
