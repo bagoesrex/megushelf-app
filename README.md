@@ -29,7 +29,7 @@ Simple APP for book data management and book categories using **Node.js**, **Exp
 1. Clone this repository: 
 ```bash
  git clone https://github.com/bagoesrex/megushelf-app.git
- megushelf-app cd
+ cd megushelf-app
  ```
 2. Install dependencies:
  ```bash
@@ -42,7 +42,6 @@ Simple APP for book data management and book categories using **Node.js**, **Exp
 4. Run the server:
  ```bash
  npm start
- cd project-name
  ```
 
 ## 🔜 Soon As Possible
