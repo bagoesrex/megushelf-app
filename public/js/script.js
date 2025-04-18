@@ -50,6 +50,8 @@ function loadContent(section, el) {
               loadBooks();
             }
           });
+      } else if (section === "category") {
+        loadCategories();
       }
     })
     .catch((err) => {
@@ -117,32 +119,68 @@ function loadBooks() {
     });
 }
 
-window.deleteBook = (id) => {
-  const modal = new bootstrap.Modal(
-    document.getElementById("deleteConfirmModal")
-  );
-  modal.show();
+function loadCategories() {
+  fetch(`${API_BASE}/bookcategories`)
+    .then((res) => res.json())
+    .then((categories) => {
+      const tbody = document.getElementById("category-table-body");
+      const categoryListContainer = document.getElementById(
+        "category-list-container"
+      );
+      const emptyCategoryContainer = document.getElementById(
+        "empty-category-container"
+      );
 
-  document
-    .getElementById("confirmDeleteBtn")
-    .addEventListener("click", function () {
-      fetch(`${API_BASE}/books/${id}`, { method: "DELETE" })
-        .then((res) => res.json())
-        .then(() => {
-          modal.hide();
-          loadContent("books");
-        })
-        .catch((err) => console.error("Error deleting book:", err));
+      tbody.innerHTML = "";
+
+      if (categories.length === 0) {
+        categoryListContainer.style.display = "none";
+        emptyCategoryContainer.style.display = "block";
+        return;
+      }
+
+      categoryListContainer.style.display = "block";
+      emptyCategoryContainer.style.display = "none";
+
+      categories.forEach((cat) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${cat.categoryName}</td>
+          <td>${cat.books?.length || 0}</td>
+          <td>
+            <button class="btn btn-sm btn-warning text-white me-2" onclick='openCategoryModal(${JSON.stringify(
+              cat
+            )})'>Edit</button>
+            <button class="btn btn-sm btn-danger" onclick='deleteCategory("${
+              cat._id
+            }")'>Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    })
+    .catch((err) => {
+      console.error("Error fetching categories:", err);
     });
-};
+}
 
 function loadBookCategories(selectedId = "") {
   fetch(`${API_BASE}/bookcategories`)
     .then((res) => res.json())
     .then((categories) => {
+      const tbody = document.getElementById("body-table-body");
       const categorySelect = document.getElementById("book-category");
       const bookCategoryFilter = document.getElementById(
         "book-category-filter"
+      );
+
+      console.log(categories);
+
+      const categoryListContainer = document.getElementById(
+        "category-list-container"
+      );
+      const emptyCategoryContainer = document.getElementById(
+        "empty-category-container"
       );
 
       categorySelect.innerHTML =
@@ -154,7 +192,30 @@ function loadBookCategories(selectedId = "") {
         const isSelected = cat._id === selectedId ? "selected" : "";
         categorySelect.innerHTML += `<option value="${cat._id}" ${isSelected}>${cat.categoryName}</option>`;
         bookCategoryFilter.innerHTML += `<option value="${cat._id}">${cat.categoryName}</option>`;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${cat.categoryName}</td>
+          <td>${cat.books?.length || 0}</td>
+          <td>
+            <button class="btn btn-sm btn-warning text-white me-2" onclick='openCategoryModal(${JSON.stringify(
+              cat
+            )})'>Edit</button>
+            <button class="btn btn-sm btn-danger" onclick='deleteCategory("${
+              cat._id
+            }")'>Delete</button>
+          </td>
+        `;
       });
+
+      tbody.innerHTML = "";
+      if (categories.length === 0) {
+        categoryListContainer.style.display = "none";
+        emptyCategoryContainer.style.display = "block";
+        return;
+      }
+
+      categoryListContainer.style.display = "block";
+      emptyCategoryContainer.style.display = "none";
     })
     .catch((err) => {
       console.error("Error fetching categories:", err);
@@ -330,6 +391,53 @@ window.openBookModal = (book = null) => {
   modal.show();
 };
 
+window.openCategoryModal = (cat = null) => {
+  const modal = new bootstrap.Modal(document.getElementById("categoryModal"));
+  const form = document.getElementById("category-form");
+
+  form.reset();
+  document.getElementById("category-id").value = cat ? cat._id : "";
+  document.getElementById("category-name").value = cat ? cat.categoryName : "";
+
+  modal.show();
+};
+
+window.deleteBook = (id) => {
+  const modal = new bootstrap.Modal(
+    document.getElementById("deleteConfirmModal")
+  );
+  modal.show();
+
+  document
+    .getElementById("confirmDeleteBtn")
+    .addEventListener("click", function () {
+      fetch(`${API_BASE}/books/${id}`, { method: "DELETE" })
+        .then((res) => res.json())
+        .then(() => {
+          modal.hide();
+          loadContent("books");
+        })
+        .catch((err) => console.error("Error deleting book:", err));
+    });
+};
+
+window.deleteCategory = (id) => {
+  const modal = new bootstrap.Modal(
+    document.getElementById("deleteConfirmModal")
+  );
+  modal.show();
+
+  document.getElementById("confirmDeleteBtn").onclick = () => {
+    fetch(`${API_BASE}/bookcategories/${id}`, { method: "DELETE" })
+      .then((res) => res.json())
+      .then(() => {
+        modal.hide();
+        loadCategories();
+      })
+      .catch((err) => console.error("Error deleting category:", err));
+  };
+};
+
 document.addEventListener("DOMContentLoaded", function () {
   const firstNavItem = document.querySelector(".sidebar .nav-item");
   if (firstNavItem) {
@@ -374,5 +482,31 @@ document.addEventListener("submit", function (e) {
         loadContent("books");
       })
       .catch((err) => console.error("Error saving book:", err));
+  } else if (e.target.id === "category-form") {
+    e.preventDefault();
+
+    const id = document.getElementById("category-id").value;
+    const name = document.getElementById("category-name").value.trim();
+
+    if (!name) return;
+
+    const method = id ? "PUT" : "POST";
+    const endpoint = id
+      ? `${API_BASE}/bookcategories/${id}`
+      : `${API_BASE}/bookcategories`;
+
+    fetch(endpoint, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ categoryName: name }),
+    })
+      .then((res) => res.json())
+      .then(() => {
+        bootstrap.Modal.getInstance(
+          document.getElementById("categoryModal")
+        ).hide();
+        loadCategories();
+      })
+      .catch((err) => console.error("Error saving category:", err));
   }
 });

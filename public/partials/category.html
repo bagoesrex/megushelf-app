@@ -1,40 +1,123 @@
-<!-- Main Category Container -->
-<div class="container" id="category-list-container" style="display: none">
-  <!-- Book List -->
+<!-- Category Container -->
+<div class="container">
   <div class="card p-4 shadow-sm">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h4 class="mb-0">📚 Categories</h4>
       <button
         class="btn btn-sm btn-warning text-white"
-        onclick="openBookModal()"
+        onclick="openCategoryModal()"
       >
-        Edit
+        Add Category
       </button>
     </div>
 
-    <!-- Book Table -->
-    <div class="table-responsive">
-      <table class="table table-bordered table-hover align-middle">
-        <thead class="table-primary">
-          <tr>
-            <th scope="col">Category</th>
-            <th scope="col">Books in This Category</th>
-            <th scope="col">Actions</th>
-          </tr>
-        </thead>
-        <tbody id="book-table-body"></tbody>
-      </table>
+    <div class="container" id="category-list-container">
+      <!-- Category Table -->
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+          <thead class="table-primary">
+            <tr>
+              <th scope="col">Category Name</th>
+              <th scope="col">Books in Category</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="category-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Empty Category Container -->
+    <div class="container" id="empty-category-container" style="display: none">
+      <div class="card shadow-sm text-center p-5">
+        <h3 class="mb-3">😢 Oops! Tidak ada Category</h3>
+        <p class="mb-4">
+            Silakan tambahkan Category terlebih dahulu untuk mulai mengelola buku.
+        </p>
+        <button class="btn btn-primary" onclick="openCategoryModal()">
+          ➕ Add Category
+        </button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Empty Categories Container -->
-<div class="container my-1" id="empty-category-container" style="display: none">
-  <div class="card shadow-sm text-center p-5">
-    <h3 class="mb-3">😢 Oops! Tidak ada kategori</h3>
-    <p class="mb-4">
-      Silakan tambahkan kategori terlebih dahulu untuk mulai mengelola buku.
-    </p>
-    <button class="btn btn-primary" onclick="">➕ Tambah Kategori</button>
+<!-- Category Modal -->
+<div
+  class="modal fade"
+  id="categoryModal"
+  tabindex="-1"
+  aria-labelledby="categoryModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <form id="category-form" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="categoryModalLabel">
+          📂 Add / Edit Category
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="category-id" />
+        <div class="mb-3">
+          <label for="category-name" class="form-label">Category Name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="category-name"
+            placeholder="Enter category name"
+            required
+          />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-success">Save Category</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Delete Category Confirmation Modal -->
+<div
+  class="modal fade"
+  id="deleteConfirmModal"
+  tabindex="-1"
+  aria-labelledby="deleteConfirmModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="deleteConfirmModalLabel">
+          Delete Category
+        </h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this category?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button id="confirmDeleteBtn" type="button" class="btn btn-danger">
+          Delete
+        </button>
+      </div>
+    </div>
   </div>
 </div>
