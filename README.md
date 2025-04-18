@@ -44,3 +44,9 @@ Simple APP for book data management and book categories using **Node.js**, **Exp
  npm start
  cd project-name
  ```
+
+## 🔜 Soon As Possible
+
+- [ ] Rewrite the application using **React**
+- [ ] Deploy the app to **Vercel**
+- [ ] Fix some bugs, like filtering with 3 categories directly
