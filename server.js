@@ -2,6 +2,9 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import { dbConfig } from "./config/db.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 import bookRoutes from "./routes/bookRoutes.js";
 import bookCategoryRoutes from "./routes/bookCategoryRoutes.js";
