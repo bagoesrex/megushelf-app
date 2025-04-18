@@ -25,7 +25,8 @@
       <div class="sidebar">
         <div>
           <div class="logo">
-            <i class="fa-solid fa-layer-group text-danger"></i> Megu Shelf
+            <i class="fa-solid fa-layer-group text-danger"></i>
+            <p class="text-danger" style="display: inline">Megu Shelf</p>
           </div>
           <div class="nav-item active" onclick="loadContent('dashboard', this)">
             <i class="fa-solid fa-house"></i> Dashboard
@@ -43,7 +44,13 @@
       <div class="main">
         <!-- Main Navbar -->
         <div class="navbar d-flex justify-content-end p-2">
-          <button><i>Night Mode</i></button>
+          <button
+            id="night-btn"
+            class="btn btn-secondary"
+            onclick="toggleDarkMode()"
+          >
+            <i class="fa-solid fa-moon disabled"></i> Night Mode (soon)
+          </button>
         </div>
 
         <!-- Main Content -->
