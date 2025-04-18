@@ -1,16 +1,16 @@
 # 📚 Megu Management App
 
-APP sederhana untuk manajemen data buku dan kategori buku menggunakan **Node.js**, **Express**, dan **MongoDB**.
+Simple APP for book data management and book categories using **Node.js**, **Express**, and **MongoDB**.
 
-## 🚀 Fitur
+## 🚀 Features
 
-- Manajemen Kategori Buku:
-  - Tambah, edit, hapus, dan tampilkan semua kategori
-- Manajemen Buku:
-  - Tambah, edit, hapus, dan tampilkan semua buku
-  - Filter berdasarkan kategori, teks (judul, penulis, penerbit), dan tahun terbit
+- Book Category Management:
+- Add, edit, delete, and display all categories
+- Book Management:
+- Add, edit, delete, and display all books
+- Filter by category, text (title, author, publisher), and year of publication
 
-## 🛠️ Teknologi yang Digunakan
+## 🛠️ Technologies Used
 
 - [Node.js](https://nodejs.org/)
 - [Express](https://expressjs.com/)
@@ -24,23 +24,23 @@ APP sederhana untuk manajemen data buku dan kategori buku menggunakan **Node.js*
 - npm or another package manager
 - Node.js
 
-## 📦 Instalasi
+## 📦 Installation
 
-1. Clone repository ini:
-   ```bash
-   git clone https://github.com/bagoesrex/megushelf-app.git
-   cd megushelf-app
-   ```
+1. Clone this repository: 
+```bash
+ git clone https://github.com/bagoesrex/megushelf-app.git
+ megushelf-app cd
+ ```
 2. Install dependencies:
-   ```bash
-   npm install
-   ```
+ ```bash
+ npm install
+ ```
 3. Configure the .env file (optional, unless you encounter an error):
-   ```bash
-   MONGODB_URI=mongodb://localhost:27017/database_name or mongodb+srv://<username>:<passwordDb>@cluster0.io5olsm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-   ```
-4. Jalankan server:
-   ```bash
-   npm start
-   cd project-name
-   ```
+ ```bash
+ MONGODB_URI=mongodb://localhost:27017/database_name or mongodb+srv://<username>:<passwordDb>@cluster0.io5olsm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+ ```
+4. Run the server:
+ ```bash
+ npm start
+ cd project-name
+ ```
