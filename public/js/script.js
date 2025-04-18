@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = "http://localhost:3000/api";
 
 function loadContent(section, el) {
   const content = document.getElementById("main-content");

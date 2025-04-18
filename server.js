@@ -7,7 +7,7 @@ import bookRoutes from "./routes/bookRoutes.js";
 import bookCategoryRoutes from "./routes/bookCategoryRoutes.js";
 
 const app = express();
-const PORT = 5000;
+const PORT = 3000;
 
 mongoose
   .connect(dbConfig.uri)
