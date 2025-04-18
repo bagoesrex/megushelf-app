@@ -144,9 +144,9 @@ function loadCategories() {
 
       categories.forEach((cat) => {
         const tr = document.createElement("tr");
+        console.log(cat);
         tr.innerHTML = `
           <td>${cat.categoryName}</td>
-          <td>${cat.books?.length || 0}</td>
           <td>
             <button class="btn btn-sm btn-warning text-white me-2" onclick='openCategoryModal(${JSON.stringify(
               cat
@@ -367,12 +367,36 @@ function searchBooks(query) {
     });
 }
 
+const reloadCategoriesInBookModal = () => {
+  const categorySelect = document.getElementById("book-category");
+  const bookCategoryFilter = document.getElementById("book-category-filter");
+
+  fetch(`${API_BASE}/bookcategories`)
+    .then((res) => res.json())
+    .then((categories) => {
+      categorySelect.innerHTML =
+        '<option value="">-- Select Category --</option>';
+      bookCategoryFilter.innerHTML =
+        "<option selected>-- All Categories --</option>";
+
+      categories.forEach((category) => {
+        const option = document.createElement("option");
+        option.value = category._id;
+        option.textContent = category.categoryName;
+
+        categorySelect.appendChild(option);
+        bookCategoryFilter.appendChild(option.cloneNode(true));
+      });
+    })
+    .catch((err) => console.error("Error loading categories:", err));
+};
+
 window.openBookModal = (book = null) => {
   const selectedCategoryId = Array.isArray(book?.category)
     ? book.category[0]?._id || book.category[0]?.$oid || book.category[0] || ""
     : "";
 
-  loadBookCategories(selectedCategoryId);
+  reloadCategoriesInBookModal(selectedCategoryId);
 
   const modal = new bootstrap.Modal(document.getElementById("bookModal"));
   const form = document.getElementById("book-form");
@@ -505,7 +529,7 @@ document.addEventListener("submit", function (e) {
         bootstrap.Modal.getInstance(
           document.getElementById("categoryModal")
         ).hide();
-        loadCategories();
+        reloadCategoriesInBookModal();
       })
       .catch((err) => console.error("Error saving category:", err));
   }
