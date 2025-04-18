@@ -88,12 +88,15 @@ router.get("/books/search", async (req, res) => {
   }
 });
 
-// Filter books by publication date range
-router.get("/books/filter-by-date", async (req, res) => {
-  const { startDate, endDate } = req.query;
+// Filter books by publication year
+router.get("/books/years", async (req, res) => {
+  const { year } = req.query;
   try {
+    const startDate = new Date(`${year}-01-01`);
+    const endDate = new Date(`${year}-12-31T23:59:59.999`);
+
     const books = await Book.find({
-      published: { $gte: new Date(startDate), $lte: new Date(endDate) },
+      published: { $gte: startDate, $lte: endDate },
     }).populate("category");
     res.json(books);
   } catch (err) {

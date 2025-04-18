@@ -39,6 +39,17 @@ function loadContent(section, el) {
               loadBooks();
             }
           });
+
+        document
+          .getElementById("publication-year-filter")
+          .addEventListener("change", function () {
+            const year = this.value;
+            if (year) {
+              loadBooksByYear(year);
+            } else {
+              loadBooks();
+            }
+          });
       }
     })
     .catch((err) => {
@@ -56,6 +67,8 @@ function loadBooks() {
       const emptyBookContainer = document.getElementById(
         "empty-book-container"
       );
+      const dateFilter = document.getElementById("publication-year-filter");
+      const uniqueYears = new Set();
 
       tbody.innerHTML = "";
       if (books.length === 0) {
@@ -68,6 +81,13 @@ function loadBooks() {
       emptyBookContainer.style.display = "none";
 
       books.forEach((book, index) => {
+        const date = book.published
+          ? new Date(book.published).toLocaleDateString()
+          : "-";
+
+        const year = new Date(book.published).getFullYear();
+        uniqueYears.add(year);
+
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${index + 1}</td>
@@ -75,9 +95,7 @@ function loadBooks() {
           <td>${book.author}</td>
           <td>${book.publisher}</td>
           <td>${book.category?.[0]?.categoryName || "-"}</td>
-          <td>${
-            book.published ? new Date(book.published).toLocaleDateString() : "-"
-          }</td>
+          <td>${date}</td>
           <td>
             <button class="btn btn-sm btn-warning text-white me-2" onclick='openBookModal(${JSON.stringify(
               book
@@ -88,6 +106,10 @@ function loadBooks() {
           </td>
         `;
         tbody.appendChild(tr);
+      });
+
+      uniqueYears.forEach((year) => {
+        dateFilter.innerHTML += `<option value="${year}">${year}</option>`;
       });
     })
     .catch((err) => {
@@ -184,6 +206,55 @@ function loadBooksByCategory(categoryId) {
     })
     .catch((err) => {
       console.error("Error fetching books by category:", err);
+    });
+}
+
+function loadBooksByYear(year) {
+  fetch(`${API_BASE}/books/years?year=${year}`)
+    .then((res) => res.json())
+    .then((books) => {
+      console.log(books);
+      const tbody = document.getElementById("book-table-body");
+      const bookListContainer = document.getElementById("book-list-container");
+      const emptyBookContainer = document.getElementById(
+        "empty-book-container"
+      );
+
+      tbody.innerHTML = "";
+      if (books.length === 0) {
+        bookListContainer.style.display = "none";
+        emptyBookContainer.style.display = "block";
+        return;
+      }
+
+      bookListContainer.style.display = "block";
+      emptyBookContainer.style.display = "none";
+
+      books.forEach((book, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${book.title}</td>
+          <td>${book.author}</td>
+          <td>${book.publisher}</td>
+          <td>${book.category?.[0]?.categoryName || "-"}</td>
+          <td>${
+            book.published ? new Date(book.published).toLocaleDateString() : "-"
+          }</td>
+          <td>
+            <button class="btn btn-sm btn-warning text-white me-2" onclick='openBookModal(${JSON.stringify(
+              book
+            )})'>Edit</button>
+            <button class="btn btn-sm btn-danger" onclick='deleteBook("${
+              book._id
+            }")'>Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    })
+    .catch((err) => {
+      console.error("Error filtering books by year:", err);
     });
 }
 
